@@ -192,7 +192,7 @@ class InvokeCloudside {
               for (let j = 0; j < resource.length; j++) {
 
                 let value = resource[j].type == 'Ref' ? res.StackResources[i].PhysicalResourceId
-                  : buildCloudValue(res.StackResources[i],resource[j].type)
+                  : buildCloudValue(res.StackResources[i],resource[j].type, resource[j].env);
 
                 if (resource[j].fn) {
                   this.serverless.service.functions[resource[j].fn].environment[
@@ -263,13 +263,23 @@ const parseEnvs = (envs = {},fn) => Object.keys(envs).reduce((vars,key) => {
 
 
 // Build the cloud value based on type
-const buildCloudValue = (resource,type) => {
+const buildCloudValue = (resource,type,env) => {
   switch(type) {
     case 'Arn':
       return generateArn(resource)
     default:
-      return '<FUNCTION NOT SUPPORTED>'
+      return findInEnvironment(env);
   }
+}
+
+const findInEnvironment = (env) => {
+  let value = process.env[env];
+
+  if (value) {
+    return value;
+  }
+
+  return '<FUNCTION NOT SUPPORTED>';
 }
 
 // Generate the ARN based on service type
