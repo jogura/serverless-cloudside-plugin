@@ -303,6 +303,9 @@ const generateArn = resource => {
       stack.splice(3,5,'','')
       stack.push(resource.PhysicalResourceId)
       break
+    case 'kms':
+      stack.push(`key/${resource.PhysicalResourceId}`)
+      break      
     default:
       return '<RESOURCE NOT SUPPORTED>'
   }
