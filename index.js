@@ -305,7 +305,13 @@ const generateArn = resource => {
       break
     case 'kms':
       stack.push(`key/${resource.PhysicalResourceId}`)
-      break      
+      break
+    case 'iam':
+      if (resourceType.length === 3 && resourceType[2] === 'Role') {
+        stack[3]=`:${stack[4]}`
+        stack[4]=`${resourceType[2].toLowerCase()}/${resource.PhysicalResourceId}`
+        break
+      }
     default:
       return '<RESOURCE NOT SUPPORTED>'
   }
